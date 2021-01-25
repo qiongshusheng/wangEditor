@@ -8,39 +8,45 @@ import { HEXToRGBA } from '../../util/color-conversion'
 import drag from '../../util/drag'
 
 export default function bindEvent(palette: Palette) {
+    const $refs = palette.$el.$refs()
+
     // 拖拽绑定 - 色度
-    drag(palette.$refs.hue, function ({ y, h }) {
+    drag($refs.hue, function ({ y, h }) {
         palette.forward = true
         palette.data.position.h = y / h
     })
 
     // 拖拽绑定 - 饱和度、纯度
-    drag(palette.$refs.sv, function ({ x, y, w, h }) {
+    drag($refs.sv, function ({ x, y, w, h }) {
         palette.forward = true
         palette.data.position.s = x / w
         palette.data.position.v = y / h
     })
 
     // 拖拽绑定 - 透明度
-    drag(palette.$refs.alpha, function ({ x, w }) {
+    drag($refs.alpha, function ({ x, w }) {
         palette.forward = true
         palette.data.position.a = x / w
     })
 
     // 输入绑定
-    palette.$refs.input.on('blur', function (e) {
+    $refs.input.on('blur', function (e: FocusEvent) {
         palette.forward = false
         let value = (e.target as HTMLInputElement).value.trim()
         // 分析用户的输入
         if (/\^#[0-9a-zA-Z]$/.test(value)) {
-            const rgba = HEXToRGBA(value)
-            palette.data.r = rgba.r
-            palette.data.g = rgba.g
-            palette.data.b = rgba.b
-            palette.data.a = rgba.a
+            palette.data.value = value
+            palette.data.pattern = 'hex'
+            const { r, g, b, a } = HEXToRGBA(value)
+            palette.data.r = r
+            palette.data.g = g
+            palette.data.b = b
+            palette.data.a = a
         } else if (/^(rgb|RGB)/.test(value)) {
             const rgba = value.match(/\d+(\.\d+)?/g)
             if (rgba && rgba.length > 2) {
+                palette.data.value = value
+                palette.data.pattern = 'rgb'
                 const [r, g, b, a] = rgba.map(n => parseFloat(n))
                 palette.data.r = r
                 palette.data.g = g
@@ -51,11 +57,26 @@ export default function bindEvent(palette: Palette) {
     })
 
     // 切换输出值的模式
-    palette.$refs.pattern.on('click', function () {
+    $refs.pattern.on('click', function () {
         let index = palette.pattern.indexOf(palette.data.pattern) + 1
-        if (index > palette.pattern.length) {
+        if (index >= palette.pattern.length) {
             index = 0
         }
         palette.data.pattern = palette.pattern[index]
+    })
+
+    const picker = palette.picker
+
+    // 取消
+    $refs.cancel.on('click', function () {
+        picker.hide()
+        picker.config.cancel(palette.data.value)
+    })
+
+    // 确定
+    $refs.done.on('click', function () {
+        picker.hide()
+        picker.record(palette.data.value)
+        picker.config.done(palette.data.value)
     })
 }

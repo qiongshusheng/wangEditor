@@ -1,5 +1,5 @@
 /**
- * @author fangzhicong
+ * @author 翠林
  * @deprecated 颜色转换
  */
 
@@ -20,6 +20,7 @@ export function RGBAToHEX(r: number, g: number, b: number, a: number = 1) {
 
 /**
  * HEX 转 RGBA
+ * https://www.rapidtables.com/convert/color/hex-to-rgb.html
  * @param hex HEX
  */
 export function HEXToRGBA(hex: string) {
@@ -43,17 +44,6 @@ export function HEXToRGBA(hex: string) {
         rgba.a = parseFloat((parseInt(hex.substring(6, 8), 16) / 255).toFixed(2))
     }
     return rgba
-}
-
-/**
- * RGBA 转 RGBA 字符串
- * @param r RGBA 的 R
- * @param g RGBA 的 G
- * @param b RGBA 的 B
- * @param a RGBA 的 A
- */
-export function RGBAToSTR(r: number, g: number, b: number, a: number = 1) {
-    return a == 1 ? `rgb(${r}, ${g}, ${b})` : `rgba(${r}, ${g}, ${b}, ${a})`
 }
 
 /**
@@ -89,4 +79,56 @@ export function RGBToHSV(r: number, g: number, b: number) {
     hsv.s *= 100
     hsv.v *= 100
     return hsv
+}
+
+/**
+ * HSV 转 RGB
+ * https://www.rapidtables.com/convert/color/hsv-to-rgb.html
+ * @param h HSV 的 H
+ * @param s HSV 的 S
+ * @param v HSV 的 V
+ */
+export function HSVToRGB(h: number, s: number, v: number) {
+    const rgb = { r: 0, g: 0, b: 0 }
+    if (h < 0) h = 0
+    if (s < 0) s = 0
+    if (v < 0) v = 0
+    if (h >= 360) h = 359
+    if (s > 100) s = 100
+    if (v > 100) v = 100
+    s /= 100.0
+    v /= 100.0
+    const C = v * s
+    const hh = h / 60.0
+    const X = C * (1.0 - Math.abs((hh % 2) - 1.0))
+    if (hh >= 0 && hh < 1) {
+        rgb.r = C
+        rgb.g = X
+    } else if (hh >= 1 && hh < 2) {
+        rgb.r = X
+        rgb.g = C
+    } else if (hh >= 2 && hh < 3) {
+        rgb.g = C
+        rgb.b = X
+    } else if (hh >= 3 && hh < 4) {
+        rgb.g = X
+        rgb.b = C
+    } else if (hh >= 4 && hh < 5) {
+        rgb.r = X
+        rgb.b = C
+    } else {
+        rgb.r = C
+        rgb.b = X
+    }
+    const m = v - C
+    rgb.r += m
+    rgb.g += m
+    rgb.b += m
+    rgb.r *= 255
+    rgb.g *= 255
+    rgb.b *= 255
+    rgb.r = Math.round(rgb.r)
+    rgb.g = Math.round(rgb.g)
+    rgb.b = Math.round(rgb.b)
+    return rgb
 }

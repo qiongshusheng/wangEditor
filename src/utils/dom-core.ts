@@ -752,15 +752,13 @@ export class DomElement<T extends DomElementSelector = DomElementSelector> {
     }
 
     /**
-     * 查找子元素中绑定了特定 attribute 属性的 DOM 节点
-     * @param attr attribute
+     * 查找子元素中绑定了特定 ref attribute 的节点
      */
-    $refs(attr?: string) {
-        const ref = attr || 'ref'
+    $refs() {
         const temp: $refs = {}
-        const allRef = this.elems[0].querySelectorAll(`[${ref}]`)
-        arrForEach(allRef, el => {
-            temp[el.getAttribute(ref) as string] = $(el)
+        const refs = this.elems[0].querySelectorAll(`[ref]`)
+        arrForEach(refs, el => {
+            temp[el.getAttribute('ref') as string] = $(el)
         })
         return temp
     }

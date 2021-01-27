@@ -26,20 +26,17 @@ export default class Palette {
      * 数据
      */
     public data: Data = {
-        // 滑块定位数据
-        position: {
-            h: 0,
-            s: 1,
-            v: 1,
-            a: 1,
-        },
-        h: '0deg',
-        s: '100%',
-        v: '100%',
+        mh: 180,
+        ms: 240,
+        mv: 180,
+        ma: 240,
+        h: 0,
+        s: 240,
+        v: 180,
+        a: 240,
         r: 255,
         g: 0,
         b: 0,
-        a: 1,
         // 当前颜色值的类型。
         pattern: 'rgb',
         // 用于输出的值，这个值的类型由 pattern 决定
@@ -71,13 +68,16 @@ export default class Palette {
      * 生成颜色最终值
      */
     public computedValue() {
-        const { r, g, b, a } = this.data
+        console.log(this.data)
+        const { r, g, b, a, ma } = this.data
+        const av = parseFloat((a / ma).toFixed(2))
         switch (this.data.pattern) {
             case 'hex':
-                this.data.value = RGBAToHEX(r, g, b, a)
+                this.data.value = RGBAToHEX(r, g, b, av)
                 break
             default:
-                this.data.value = a === 1 ? `rgb(${r}, ${g}, ${b})` : `rgba(${r}, ${g}, ${b}, ${a})`
+                this.data.value =
+                    av === 1 ? `rgb(${r}, ${g}, ${b})` : `rgba(${r}, ${g}, ${b}, ${av})`
                 break
         }
     }

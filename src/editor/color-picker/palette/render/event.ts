@@ -13,20 +13,24 @@ export default function bindEvent(palette: Palette) {
     // 拖拽绑定 - 色度
     drag($refs.hue, function ({ y, h }) {
         palette.forward = true
-        palette.data.position.h = y / h
+        palette.data.mh = h
+        palette.data.h = y
     })
 
     // 拖拽绑定 - 饱和度、纯度
     drag($refs.sv, function ({ x, y, w, h }) {
         palette.forward = true
-        palette.data.position.s = x / w
-        palette.data.position.v = y / h
+        palette.data.s = x
+        palette.data.v = h - y
+        palette.data.ms = w
+        palette.data.mv = h
     })
 
     // 拖拽绑定 - 透明度
     drag($refs.alpha, function ({ x, w }) {
         palette.forward = true
-        palette.data.position.a = x / w
+        palette.data.a = x
+        palette.data.ma = w
     })
 
     // 输入绑定

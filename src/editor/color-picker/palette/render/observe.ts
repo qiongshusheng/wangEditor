@@ -7,7 +7,6 @@
  *  数据改变视图：输入框变化 => 更新 rgba 的值和预览色块 => 更新 hsv 的值 => 更新滑块定位
  */
 
-import throttle from 'lodash/throttle'
 import Palette from '..'
 import { HSVToRGB, RGBToHSV } from '../../util/color-conversion'
 import define from '../../util/define'
@@ -15,113 +14,60 @@ import define from '../../util/define'
 export default function observe(palette: Palette) {
     const $refs = palette.$el.$refs()
 
-    /**
-     * 过滤数据，将数据限定在 0 ~ 1
-     * @param value 被过滤的数据
-     */
-    function between0and1(value: number) {
-        if (value > 1) {
-            value /= 100
-        }
-        if (value < 0) {
-            value = 0
-        }
-        value = parseFloat(value.toFixed(2))
-        return {
-            valid: true,
-            data: value,
-        }
+    function hsvtorgb() {
+        const { h, s, v, mh, ms, mv } = palette.data
+        const { r, g, b } = HSVToRGB((h / mh) * 360, (s / ms) * 100, (v / mv) * 100)
+        palette.data.r = r
+        palette.data.g = g
+        palette.data.b = b
     }
 
     /**
-     * 滑块定位 - 色度
+     * 色度
      */
-    define(palette.data.position, 'h', function (value) {
-        $refs.hue.css('top', `${value * 100}%`)
-        if (palette.forward) {
-            palette.data.h = -value
-        }
-    }, between0and1)
+    define(palette.data, 'h', function (value: number) {
+        // 滑块定位
+        $refs.hue.css('top', `${value}px`)
+        // 更新饱和度和纯度的面板视图
+        const { r, g, b } = HSVToRGB((value / palette.data.mh) * 360, 100, 100)
+        $refs.bg.css('background', `rgb(${r}, ${g}, ${b})`)
+        hsvtorgb()
+    })
 
     /**
-     * 滑块定位 - 饱和度
+     * 饱和度
      */
-    define(palette.data.position, 's', function (value) {
-        $refs.sv.css('left', `${value * 100}%`)
-        if (palette.forward) {
-            palette.data.s = -value
-        }
-    }, between0and1)
+    define(palette.data, 's', function (value: number) {
+        // console.log(`s: ${value}`)
+        // 滑块定位
+        $refs.sv.css('left', `${value}px`)
+        hsvtorgb()
+    })
 
     /**
-     * 滑块定位 - 纯度
+     * 纯度
      */
-    define(palette.data.position, 'v', function (value) {
-        $refs.sv.css('top', `${value * 100}%`)
-        if (palette.forward) {
-            palette.data.v = value - 1
-        }
-    }, between0and1)
+    define(palette.data, 'v', function (value: number) {
+        // console.log(`v: ${value}`)
+        // 滑块定位
+        $refs.sv.css('top', `${palette.data.mv - value}px`)
+        hsvtorgb()
+    })
 
     /**
      * 滑块定位 - 透明度
      */
-    define(palette.data.position, 'a', function (value) {
-        $refs.alpha.css('left', `${value * 100}%`)
-        if (palette.forward) {
-            palette.data.a = value
-        }
-    }, between0and1)
-
-    // 转换颜色
-    const hsvChange = throttle(() => {
-        const { h, s, v } = palette.data
-        if (palette.forward) {
-            // hsv 转 rgb
-            const { r, g, b } = HSVToRGB(h, s, v)
-            palette.data.r = r
-            palette.data.g = g
-            palette.data.b = b
-        } else {
-            const reg = /\d+(\.\d+)?/
-            // 更新 hsv 视图的定位
-            palette.data.position.h = h.match(reg)[0] / 360
-            palette.data.position.s = s.match(reg)[0] / 100
-            palette.data.position.v = v.match(reg)[0] / 100
-        }
-    }, 25)
-
-    /**
-     * 色度（值的范围限定在 -1 ~ 360；-1 ~ 0 表示传入的百分比；0 ~ 360 表示传入的最终值）
-     */
-    define<number, string>(palette.data, 'h', hsvChange, function (value) {
-        if (value >= -1) {
-            if (value < 0) {
-                value = Math.abs(value * 360)
-            }
-            value = parseFloat(value.toFixed(1))
-            if (value >= 360 || value < 0) {
-                value = 0
-            }
-            return {
-                valid: true,
-                data: `${value}deg`,
-            }
-        } else {
-            return {
-                valid: false,
-                data: value,
-            }
-        }
+    define(palette.data, 'a', function (value: number) {
+        $refs.alpha.css('left', `${value}px`)
+        palette.computedValue()
     })
 
     /**
      * 将值限定在 0 ~ max 之间
      * @param value 需要被过滤的值（值的范围限定在 -1 ~ max；-1 ~ 0 表示传入的百分比；0 ~ max 表示传入的最终值）
      * @param max 最大值
-     * @param template 过滤值后的模板
      */
-    function between(value: number, max: number, template?: string) {
+    function between(value: number, max: number) {
         if (value >= -1) {
             if (value < 0) {
                 value = Math.abs(value * max)
@@ -132,7 +78,7 @@ export default function observe(palette: Palette) {
             }
             return {
                 valid: true,
-                data: template ? template.replace(/\$/, value.toString()) : value,
+                data: value,
             }
         } else {
             return {
@@ -142,21 +88,7 @@ export default function observe(palette: Palette) {
         }
     }
 
-    /**
-     * 饱和度（值的范围限定在 -1 ~ 100；-1 ~ 0 表示传入的百分比；0 ~ 100 表示传入的最终值）
-     */
-    define<number, string>(palette.data, 's', hsvChange, function (value) {
-        return between(value, 100, '$%')
-    })
-
-    /**
-     * 纯度（值的范围限定在 -1 ~ 100；-1 ~ 0 表示传入的百分比；0 ~ 100 表示传入的最终值）
-     */
-    define<number, string>(palette.data, 'v', hsvChange, function (value) {
-        return between(value, 100, '$%')
-    })
-
-    const rgbChange = throttle(() => {
+    function rgbChange() {
         if (palette.forward) {
             // 生成输出框的值
             palette.computedValue()
@@ -168,7 +100,7 @@ export default function observe(palette: Palette) {
             palette.data.s = s
             palette.data.v = v
         }
-    }, 25)
+    }
 
     /**
      * RGBA - R
@@ -190,19 +122,6 @@ export default function observe(palette: Palette) {
     define(palette.data, 'b', rgbChange, function (value: number) {
         return between(value, 255)
     })
-
-    /**
-     * RGBA - A
-     */
-    define(palette.data, 'a', function (value) {
-        if (palette.forward) {
-            // 视图拖拽：
-            rgbChange()
-        } else {
-            // 代码赋值：更新透明度滑块的定位
-            palette.data.position.a = value
-        }
-    }, between0and1)
 
     /**
      * 模式切换

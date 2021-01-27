@@ -35,24 +35,24 @@ export default function define<T, K>(
     target: Data,
     prop: string,
     change: (value: T | K) => void,
-    validate: (value: T) => validata<T | K>
+    validate?: (value: T) => validata<T | K>
 ) {
     // 缓存值
     let temp = target[prop]
 
     let set = function (value: T) {
-        const { valid, data } = validate(value)
-        if (valid && data !== temp) {
-            temp = data
+        if (value !== temp) {
+            temp = value
             change(temp)
         }
         return temp
     }
 
-    if (typeof validate !== 'function') {
+    if (typeof validate === 'function') {
         set = function (value: T) {
-            if (value !== temp) {
-                temp = value
+            const { valid, data } = validate(value)
+            if (valid && data !== temp) {
+                temp = data
                 change(temp)
             }
             return temp

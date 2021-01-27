@@ -5,7 +5,7 @@
 
 const tpl = `<div class="we-palette">
 <div class="we-color_hsv">
-    <div class="we-hsv-sv">
+    <div class="we-hsv-sv" ref="bg">
         <div class="we-hsv-s"></div>
         <div class="we-hsv-v"></div>
         <div class="we-slider circle" ref="sv"></div>

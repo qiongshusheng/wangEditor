@@ -15,7 +15,7 @@ export function RGBAToHEX(r: number, g: number, b: number, a: number = 1) {
         .toString(16)
         .slice(1)
         .toUpperCase()}`
-    return a == 1 ? hex : `${hex}${a.toString(16).toUpperCase().slice(2, 4) || 'FF'}`
+    return a == 1 ? hex : `${hex}${a.toString(16).toUpperCase().slice(2, 4) || '00'}`
 }
 
 /**
@@ -82,53 +82,51 @@ export function RGBToHSV(r: number, g: number, b: number) {
 }
 
 /**
- * HSV 转 RGB
- * https://www.rapidtables.com/convert/color/hsv-to-rgb.html
+ * HSV 转 RGB（拷贝自 layui 颜色选择器的 HSBToRGB）
  * @param h HSV 的 H
  * @param s HSV 的 S
  * @param v HSV 的 V
  */
 export function HSVToRGB(h: number, s: number, v: number) {
     const rgb = { r: 0, g: 0, b: 0 }
-    if (h < 0) h = 0
-    if (s < 0) s = 0
-    if (v < 0) v = 0
-    if (h >= 360) h = 359
-    if (s > 100) s = 100
-    if (v > 100) v = 100
-    s /= 100.0
-    v /= 100.0
-    const C = v * s
-    const hh = h / 60.0
-    const X = C * (1.0 - Math.abs((hh % 2) - 1.0))
-    if (hh >= 0 && hh < 1) {
-        rgb.r = C
-        rgb.g = X
-    } else if (hh >= 1 && hh < 2) {
-        rgb.r = X
-        rgb.g = C
-    } else if (hh >= 2 && hh < 3) {
-        rgb.g = C
-        rgb.b = X
-    } else if (hh >= 3 && hh < 4) {
-        rgb.g = X
-        rgb.b = C
-    } else if (hh >= 4 && hh < 5) {
-        rgb.r = X
-        rgb.b = C
+    s = (s * 255) / 100
+    v = (v * 255) / 100
+    if (s == 0) {
+        rgb.r = rgb.g = rgb.b = v
     } else {
-        rgb.r = C
-        rgb.b = X
+        const t1 = v
+        const t2 = ((255 - s) * v) / 255
+        const t3 = ((t1 - t2) * (h % 60)) / 60
+        if (h == 360) h = 0
+        if (h < 60) {
+            rgb.r = t1
+            rgb.b = t2
+            rgb.g = t2 + t3
+        } else if (h < 120) {
+            rgb.g = t1
+            rgb.b = t2
+            rgb.r = t1 - t3
+        } else if (h < 180) {
+            rgb.g = t1
+            rgb.r = t2
+            rgb.b = t2 + t3
+        } else if (h < 240) {
+            rgb.b = t1
+            rgb.r = t2
+            rgb.g = t1 - t3
+        } else if (h < 300) {
+            rgb.b = t1
+            rgb.g = t2
+            rgb.r = t2 + t3
+        } else if (h < 360) {
+            rgb.r = t1
+            rgb.g = t2
+            rgb.b = t1 - t3
+        } else {
+            rgb.r = 0
+            rgb.g = 0
+            rgb.b = 0
+        }
     }
-    const m = v - C
-    rgb.r += m
-    rgb.g += m
-    rgb.b += m
-    rgb.r *= 255
-    rgb.g *= 255
-    rgb.b *= 255
-    rgb.r = Math.round(rgb.r)
-    rgb.g = Math.round(rgb.g)
-    rgb.b = Math.round(rgb.b)
-    return rgb
+    return { r: Math.round(rgb.r), g: Math.round(rgb.g), b: Math.round(rgb.b) }
 }

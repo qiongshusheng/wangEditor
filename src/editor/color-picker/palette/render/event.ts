@@ -4,7 +4,6 @@
  */
 
 import Palette from '..'
-import { HEXToRGBA } from '../../util/color-conversion'
 import drag from '../../util/drag'
 
 export default function bindEvent(palette: Palette) {
@@ -35,28 +34,14 @@ export default function bindEvent(palette: Palette) {
 
     // 输入绑定
     $refs.input.on('blur', function (e: FocusEvent) {
-        palette.forward = false
         let value = (e.target as HTMLInputElement).value.trim()
-        // 分析用户的输入
-        if (/\^#[0-9a-zA-Z]$/.test(value)) {
-            palette.data.value = value
-            palette.data.pattern = 'hex'
-            const { r, g, b, a } = HEXToRGBA(value)
-            palette.data.r = r
-            palette.data.g = g
-            palette.data.b = b
-            palette.data.a = a
-        } else if (/^(rgb|RGB)/.test(value)) {
-            const rgba = value.match(/\d+(\.\d+)?/g)
-            if (rgba && rgba.length > 2) {
-                palette.data.value = value
-                palette.data.pattern = 'rgb'
-                const [r, g, b, a] = rgba.map(n => parseFloat(n))
-                palette.data.r = r
-                palette.data.g = g
-                palette.data.b = b
-                palette.data.a = typeof a === 'number' ? a : 1
-            }
+        palette.analyseValue(value)
+    })
+
+    $refs.input.on('keydown', function (e: KeyboardEvent) {
+        if (e.keyCode === 13) {
+            let value = (e.target as HTMLInputElement).value.trim()
+            palette.analyseValue(value)
         }
     })
 
@@ -66,6 +51,7 @@ export default function bindEvent(palette: Palette) {
         if (index >= palette.pattern.length) {
             index = 0
         }
+        palette.forward = true
         palette.data.pattern = palette.pattern[index]
     })
 

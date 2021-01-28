@@ -47,37 +47,39 @@ export function HEXToRGBA(hex: string) {
 }
 
 /**
- * RGB 转 HSV
+ * RGB 转 HSV（拷贝自 layui 颜色选择器的 RGBToHSB）
  * https://www.rapidtables.com/convert/color/rgb-to-hsV.html
  * @param r RGB 的 R
  * @param g RGB 的 G
  * @param b RGB 的 B
  */
 export function RGBToHSV(r: number, g: number, b: number) {
-    const hsv = { h: 0, s: 100, v: 100 }
-    r /= 255
-    g /= 255
-    b /= 255
-    const max = Math.max(r, g, b)
+    const hsv = { h: 0, s: 0, v: 0 }
     const min = Math.min(r, g, b)
-    const c = max - min
-    if (c === 0) {
-        hsv.h = 0
-    } else if (max === r) {
-        hsv.h = ((g - b) / c) % 6
-    } else if (max === g) {
-        hsv.h = (b - r) / c + 2
+    const max = Math.max(r, g, b)
+    const delta = max - min
+    hsv.v = max
+    hsv.s = max != 0 ? (255 * delta) / max : 0
+    if (hsv.s != 0) {
+        if (r == max) {
+            hsv.h = (g - b) / delta
+        } else if (g == max) {
+            hsv.h = 2 + (b - r) / delta
+        } else {
+            hsv.h = 4 + (r - g) / delta
+        }
     } else {
-        hsv.h = (r - g) / c + 4
+        hsv.h = -1
+    }
+    if (max == min) {
+        hsv.h = 0
     }
     hsv.h *= 60
     if (hsv.h < 0) {
         hsv.h += 360
     }
-    hsv.v = max
-    hsv.s = hsv.v === 0 ? 0 : c / hsv.v
-    hsv.s *= 100
-    hsv.v *= 100
+    hsv.s *= 100 / 255
+    hsv.v *= 100 / 255
     return hsv
 }
 

@@ -20,7 +20,7 @@ const tpl = `<div class="we-palette">
 <div class="we-color-preview">
     <div class="we-view" ref="preview"></div>
     <div class="we-input">
-        <input class="value" type="text" value="rgba(255, 255, 255, 1)" ref="input" />
+        <input class="value" type="text" ref="input" />
         <label class="pattern" ref="pattern">RGB</label>
     </div>
 </div>

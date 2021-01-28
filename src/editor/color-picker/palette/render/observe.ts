@@ -7,19 +7,16 @@
  *  数据改变视图：输入框变化 => 更新 rgba 的值和预览色块 => 更新 hsv 的值 => 更新滑块定位
  */
 
+import { colorRegex } from '../../../../utils/const'
 import Palette from '..'
-import { HSVToRGB, RGBToHSV } from '../../util/color-conversion'
+import { HSVToRGB } from '../../util/color-conversion'
 import define from '../../util/define'
 
 export default function observe(palette: Palette) {
     const $refs = palette.$el.$refs()
 
-    function hsvtorgb() {
-        const { h, s, v, mh, ms, mv } = palette.data
-        const { r, g, b } = HSVToRGB((h / mh) * 360, (s / ms) * 100, (v / mv) * 100)
-        palette.data.r = r
-        palette.data.g = g
-        palette.data.b = b
+    function hsvaChange() {
+        palette.forward && palette.hsvToRgb()
     }
 
     /**
@@ -31,7 +28,7 @@ export default function observe(palette: Palette) {
         // 更新饱和度和纯度的面板视图
         const { r, g, b } = HSVToRGB((value / palette.data.mh) * 360, 100, 100)
         $refs.bg.css('background', `rgb(${r}, ${g}, ${b})`)
-        hsvtorgb()
+        hsvaChange()
     })
 
     /**
@@ -41,7 +38,7 @@ export default function observe(palette: Palette) {
         // console.log(`s: ${value}`)
         // 滑块定位
         $refs.sv.css('left', `${value}px`)
-        hsvtorgb()
+        hsvaChange()
     })
 
     /**
@@ -51,7 +48,7 @@ export default function observe(palette: Palette) {
         // console.log(`v: ${value}`)
         // 滑块定位
         $refs.sv.css('top', `${palette.data.mv - value}px`)
-        hsvtorgb()
+        hsvaChange()
     })
 
     /**
@@ -59,7 +56,8 @@ export default function observe(palette: Palette) {
      */
     define(palette.data, 'a', function (value: number) {
         $refs.alpha.css('left', `${value}px`)
-        palette.computedValue()
+        hsvaChange()
+        palette.createValue()
     })
 
     /**
@@ -89,17 +87,9 @@ export default function observe(palette: Palette) {
     }
 
     function rgbChange() {
-        if (palette.forward) {
-            // 生成输出框的值
-            palette.computedValue()
-        } else {
-            // rgb 转 hsv
-            const { r, g, b } = palette.data
-            const { h, s, v } = RGBToHSV(r, g, b)
-            palette.data.h = h
-            palette.data.s = s
-            palette.data.v = v
-        }
+        palette.forward
+            ? palette.createValue() // 生成输出框的值
+            : palette.rgbToHsv() // rgb 转 hsv
     }
 
     /**
@@ -127,8 +117,10 @@ export default function observe(palette: Palette) {
      * 模式切换
      */
     define(palette.data, 'pattern', function (value: string) {
-        // 生成新模式下的输出框值
-        palette.computedValue()
+        if (palette.forward) {
+            // 生成新模式下的输出框值
+            palette.createValue()
+        }
         // 更新视图中模式切换文字信息
         $refs.pattern.text(value.toUpperCase())
     }, function (value: string) {
@@ -151,8 +143,8 @@ export default function observe(palette: Palette) {
         palette.picker.config.change(value)
     }, function (value: string) {
         return {
-            valid: true,
-            data: value,
+            valid: colorRegex.test(value),
+            data: value.toLowerCase(),
         }
     })
 }

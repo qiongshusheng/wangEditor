@@ -63,21 +63,46 @@ export default class ColorPicker {
      * 配置
      */
     public config: Config = {
+        /**
+         * 内置颜色列表
+         */
         builtIn: {
             show: true,
             title: '内置颜色列表',
         },
+        /**
+         * 历史选色
+         */
         history: {
             show: true,
-            title: '历史选色',
+            title: '最近使用的颜色',
         },
+        /**
+         * 用户自定义颜色列表
+         */
         custom: {
             color: [],
             title: '自定义颜色列表',
         },
+        /**
+         * 颜色选择器的父容器
+         */
+        append: document.body,
+        /**
+         * 颜色选择器关闭的回调
+         */
         closed: EMPTY_FN,
+        /**
+         * 确认选择某一颜色的回调
+         */
         done: EMPTY_FN,
+        /**
+         * 未选色而关闭选择器的回调
+         */
         cancel: EMPTY_FN,
+        /**
+         * 调色板颜色变化的回调
+         */
         change: EMPTY_FN,
     }
 
@@ -104,6 +129,10 @@ export default class ColorPicker {
             Object.assign(instance.config.custom, config.custom)
         }
 
+        if (config.append) {
+            instance.config.append = config.append
+        }
+
         if (typeof config.closed === 'function') {
             instance.config.closed = config.closed
         }
@@ -122,16 +151,24 @@ export default class ColorPicker {
     }
 
     public render() {
+        $(this.config.append).append(this.$el)
         this.select.render()
         this.palette.render()
     }
 
+    css(key: string, value: string | number) {
+        this.$el.css(key, value)
+        return this
+    }
+
     public show() {
+        this.$el.addClass('show')
         this.select.show()
         this.palette.hide()
     }
 
     public hide() {
+        this.$el.removeClass('show')
         this.select.hide()
         this.palette.hide()
     }

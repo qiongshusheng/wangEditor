@@ -7,6 +7,7 @@ import Editor from '../../editor'
 import ColorPicker from '../../editor/color-picker'
 import $ from '../../utils/dom-core'
 import BtnMenu from '../menu-constructors/BtnMenu'
+import initPicker from './render/init-picker'
 
 export default class FontColorPicker extends BtnMenu {
     public picker: ColorPicker
@@ -18,9 +19,7 @@ export default class FontColorPicker extends BtnMenu {
             </div>`
         )
         super($elem, editor)
-        this.picker = ColorPicker.create({
-            done: this.command,
-        })
+        this.picker = initPicker(this)
     }
 
     public clickHandler() {

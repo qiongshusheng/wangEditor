@@ -49,23 +49,37 @@ export default class Select {
                 )
             )
         }
+        doms.push(`
+            <fieldset class="we-selection we-switchover">
+                <legend class="we-selection-title" ref="switchover"><span>调色板</span><span></span></legend>
+            </fieldset>`)
         this.$el.html(doms.join(''))
-        $(document.body).append(this.$el)
+        this.picker.$el.append(this.$el)
+
+        // 切换至调色板
+        this.$el.find('[ref="switchover"]').on('click', (e: Event) => {
+            e.stopPropagation()
+            this.hide()
+            this.picker.palette.show()
+        })
     }
 
     /**
      * 更新历史颜色列表
      */
     public updateHistoryList() {
-        const $refs = this.$el.$refs
-        if ('history' in $refs) {
-            ;($refs['history'] as DomElement).html(colorGroupTPL(this.picker.history))
+        if (this.picker.config.history.show) {
+            this.$el.find('[ref="history"]').html(colorGroupTPL(this.picker.history))
         }
     }
 
-    public show() {}
+    public show() {
+        this.$el.addClass('show')
+    }
 
-    public hide() {}
+    public hide() {
+        this.$el.removeClass('show')
+    }
 
     public destory() {}
 }

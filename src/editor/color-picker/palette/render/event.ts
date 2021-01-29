@@ -57,6 +57,13 @@ export default function bindEvent(palette: Palette) {
 
     const picker = palette.picker
 
+    // 切换至颜色列表
+    $refs.switchover.on('click', function (e: Event) {
+        e.stopPropagation()
+        palette.hide()
+        picker.select.show()
+    })
+
     // 取消
     $refs.cancel.on('click', function () {
         picker.hide()

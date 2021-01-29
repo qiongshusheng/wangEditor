@@ -99,7 +99,7 @@ export default class Palette {
         this.$el = $(tpl)
         bindEvent(this)
         observe(this)
-        $(document.body).append(this.$el)
+        this.picker.$el.append(this.$el)
         this.data.value = 'rgb(255, 0, 0)'
     }
 
@@ -172,9 +172,13 @@ export default class Palette {
         this.data.v = (v / 100) * this.data.mv
     }
 
-    public show() {}
+    public show() {
+        this.$el.addClass('show')
+    }
 
-    public hide() {}
+    public hide() {
+        this.$el.removeClass('show')
+    }
 
     public destory() {}
 }

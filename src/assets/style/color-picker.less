@@ -1,7 +1,9 @@
 @width: 279px;
 @interval: 7px;
-@defaultSize: 12px;
+@defaultSize: 10px;
 @border: 1px solid #cfcfcf;
+@shadow: 1px 1px 2px #ccc;
+@top: 20px;
 
 [class^='we-'],
 [class*=' we-'] {
@@ -15,25 +17,55 @@
 }
 
 .we-color-picker {
-    
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: #ffffff;
+    visibility: hidden;
+    text-align: left;
+    &.show {
+        visibility: visible;
+    }
 }
 
 // 颜色列表
 .we-selections {
+    border: @border;
+    box-shadow: @shadow;
     width: @width;
     padding: @interval 8px;
-    border: @border;
+    margin-top: @top;
     box-sizing: border-box;
+    background: #ffffff;
+    visibility: hidden;
+    opacity: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
     .we-selection {
         width: 100%;
         border: none;
-        border-top: @border;
         padding: 0;
         .we-selection-title {
-            font-size: 16px;
+            font-size: 14px;
             color: #999;
             padding: @interval 3px;
             margin: 0;
+        }
+        &.we-switchover {
+            margin-top: 8px;
+            .we-selection-title {
+                width: 100%;
+                display: flex;
+                justify-content: space-between;
+                padding-bottom: 3px;
+                border-top: 1px solid #ccc;
+                font-size: 16px;
+                padding: 10px 0 5;
+                &:hover {
+                    background: #fafafa;
+                }
+            }
         }
         .we-selection-main {
             width: 100%;
@@ -65,11 +97,19 @@
 
 // 调色板
 .we-palette {
+    border: @border;
+    box-shadow: @shadow;
     width: @width;
     padding: 10px;
     font-size: 0;
-    border: @border;
     color: #999;
+    background: #ffffff;
+    visibility: hidden;
+    margin-top: @top;
+    opacity: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
     .we-slider {
         box-sizing: border-box;
         border: 1px solid #ffffff;
@@ -157,7 +197,14 @@
             height: 24px;
             border-radius: 50%;
             overflow: hidden;
-            background-color: #ff0000;
+            overflow: hidden;
+            position: relative;
+            background:  url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAIAAADZF8uwAAAAGUlEQVQYV2M4gwH+YwCGIasIUwhT25BVBADtzYNYrHvv4gAAAABJRU5ErkJggg==);
+            .we-view-color {
+                width: 100%;
+                height: 100%;
+                background: #ff0000;
+            }
         }
         .we-input {
             display: flex;
@@ -206,4 +253,11 @@
             }
         }
     }
+}
+
+.we-selections.show,
+.we-palette.show {
+    visibility: visible;
+    margin-top: 0;
+    opacity: 1;
 }

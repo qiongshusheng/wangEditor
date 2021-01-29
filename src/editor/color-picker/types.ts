@@ -1,6 +1,8 @@
 /**
  * 对象类型数据
  */
+
+import { DomElementSelector } from '../../utils/dom-core'
 export interface Data {
     [propName: string]: any
 }
@@ -22,6 +24,7 @@ export interface Config {
         color: ColorData
         title: string
     }
+    append: DomElementSelector
     closed: (color: string) => void
     done: (color: string) => void
     cancel: (color: string) => void
@@ -45,6 +48,7 @@ export interface UserConfig {
         color: ColorData
         title: string
     }
+    append?: DomElementSelector
     closed?: (color: string) => void
     done: (color: string) => void
     cancel?: (color: string) => void

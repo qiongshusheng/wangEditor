@@ -22,6 +22,11 @@ export default class ColorPicker {
      */
     public palette: Palette
 
+    /**
+     * 当前显示的视图。颜色列表和调色板二选一
+     */
+    // public view: 'select' | 'palette' = 'select'
+
     constructor() {
         this.$el = $(`<div class="we-color-picker"></div>`)
         this.select = new Select(this)
@@ -45,7 +50,7 @@ export default class ColorPicker {
      * @param value color 值
      */
     public record(value: string) {
-        if (this.config.history.show) {
+        if (this.config.history) {
             value = value.toLowerCase()
             if (colorRegex.test(value)) {
                 const history = this.history
@@ -64,25 +69,47 @@ export default class ColorPicker {
      */
     public config: Config = {
         /**
+         * 调色板是否支持透明度选择
+         */
+        alpha: true,
+        /**
          * 内置颜色列表
          */
-        builtIn: {
-            show: true,
-            title: '内置颜色列表',
-        },
+        builtIn: true,
         /**
-         * 历史选色
+         * 内置颜色列表 Title
          */
-        history: {
-            show: true,
-            title: '最近使用的颜色',
-        },
+        builtInTitle: '内置颜色列表',
+        /**
+         * 最近使用的颜色
+         */
+        history: true,
+        /**
+         * 最近使用的颜色 Title
+         */
+        historyTitle: '最近使用的颜色',
         /**
          * 用户自定义颜色列表
          */
-        custom: {
-            color: [],
-            title: '自定义颜色列表',
+        custom: [],
+        /**
+         * 自定义颜色列表 Title
+         */
+        customTitle: '自定义颜色列表',
+        /**
+         * 关键节点的文本
+         */
+        text: {
+            /** 切换至【颜色列表】按钮 */
+            toSelect: '颜色列表',
+            /** 切换至【调色板】按钮 */
+            toPalette: '调色板',
+            /** 调色板的【确定】按钮 */
+            done: '确定',
+            /** 调色板的【取消】按钮 */
+            cancel: '取消',
+            /** 【最近使用的颜色】没有内容时的提示语 */
+            empty: '无',
         },
         /**
          * 颜色选择器的父容器
@@ -109,41 +136,7 @@ export default class ColorPicker {
     public static create(config: UserConfig) {
         const instance = new ColorPicker()
 
-        if ('builtIn' in config) {
-            if (typeof config.builtIn === 'object') {
-                Object.assign(instance.config.builtIn, config.builtIn)
-            } else {
-                instance.config.builtIn.show = !!config.builtIn
-            }
-        }
-
-        if ('history' in config) {
-            if (typeof config.history === 'object') {
-                Object.assign(instance.config.history, config.history)
-            } else {
-                instance.config.builtIn.show = !!config.history
-            }
-        }
-
-        if (typeof config.custom === 'object') {
-            Object.assign(instance.config.custom, config.custom)
-        }
-
-        if (config.append) {
-            instance.config.append = config.append
-        }
-
-        if (typeof config.closed === 'function') {
-            instance.config.closed = config.closed
-        }
-
-        if (typeof config.done === 'function') {
-            instance.config.done = config.done
-        }
-
-        if (typeof config.cancel === 'function') {
-            instance.config.cancel = config.cancel
-        }
+        Object.assign(instance.config, config)
 
         instance.render()
 
@@ -151,6 +144,9 @@ export default class ColorPicker {
     }
 
     public render() {
+        this.$el.on('click', function (e: Event) {
+            e.stopPropagation()
+        })
         $(this.config.append).append(this.$el)
         this.select.render()
         this.palette.render()
@@ -163,7 +159,7 @@ export default class ColorPicker {
 
     public show() {
         this.$el.addClass('show')
-        this.select.show()
+        this.select.updateHistoryList().show()
         this.palette.hide()
     }
 
@@ -171,10 +167,8 @@ export default class ColorPicker {
         this.$el.removeClass('show')
         this.select.hide()
         this.palette.hide()
+        this.config.closed(this)
     }
 
-    public destory() {
-        this.select.destory()
-        this.palette.destory()
-    }
+    public destory() {}
 }

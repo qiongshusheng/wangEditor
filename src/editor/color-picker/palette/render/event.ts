@@ -7,6 +7,8 @@ import Palette from '..'
 import drag from '../../util/drag'
 
 export default function bindEvent(palette: Palette) {
+    const picker = palette.picker
+
     const $refs = palette.$el.$refs()
 
     // 拖拽绑定 - 色度
@@ -25,12 +27,14 @@ export default function bindEvent(palette: Palette) {
         palette.data.mv = h
     })
 
-    // 拖拽绑定 - 透明度
-    drag($refs.alpha, function ({ x, w }) {
-        palette.forward = true
-        palette.data.a = x
-        palette.data.ma = w
-    })
+    if (picker.config.alpha && $refs.alpha) {
+        // 拖拽绑定 - 透明度
+        drag($refs.alpha, function ({ x, w }) {
+            palette.forward = true
+            palette.data.a = x
+            palette.data.ma = w
+        })
+    }
 
     // 输入绑定
     $refs.input.on('blur', function (e: FocusEvent) {
@@ -55,11 +59,8 @@ export default function bindEvent(palette: Palette) {
         palette.data.pattern = palette.pattern[index]
     })
 
-    const picker = palette.picker
-
     // 切换至颜色列表
     $refs.switchover.on('click', function (e: Event) {
-        e.stopPropagation()
         palette.hide()
         picker.select.show()
     })
@@ -68,12 +69,15 @@ export default function bindEvent(palette: Palette) {
     $refs.cancel.on('click', function () {
         picker.hide()
         picker.config.cancel(palette.data.value)
+        picker.config.closed(picker)
     })
 
     // 确定
     $refs.done.on('click', function () {
-        picker.hide()
         picker.record(palette.data.value)
+        picker.hide()
+        console.log(palette.data)
         picker.config.done(palette.data.value)
+        picker.config.closed(picker)
     })
 }

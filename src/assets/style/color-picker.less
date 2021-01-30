@@ -1,6 +1,6 @@
-@width: 279px;
-@interval: 7px;
-@defaultSize: 10px;
+@width: 280px;
+@interval: 8px;
+@defaultSize: 14px;
 @border: 1px solid #cfcfcf;
 @shadow: 1px 1px 2px #ccc;
 @top: 20px;
@@ -33,7 +33,7 @@
     border: @border;
     box-shadow: @shadow;
     width: @width;
-    padding: @interval 8px;
+    font-size: 0;
     margin-top: @top;
     box-sizing: border-box;
     background: #ffffff;
@@ -49,27 +49,46 @@
         .we-selection-title {
             font-size: 14px;
             color: #999;
-            padding: @interval 3px;
+            padding: 5px 10px 0;
             margin: 0;
+            width: 100%;
         }
         &.we-switchover {
-            margin-top: 8px;
+            margin-top: 5px;
             .we-selection-title {
-                width: 100%;
                 display: flex;
-                justify-content: space-between;
-                padding-bottom: 3px;
+                justify-content: space-evenly;
                 border-top: 1px solid #ccc;
-                font-size: 16px;
-                padding: 10px 0 5;
-                &:hover {
-                    background: #fafafa;
+                font-size: 14px;
+                padding: 0;
+                .btn {
+                    display: inline-block;
+                    width: 50%;
+                    height: 100%;
+                    text-align: center;
+                    padding: 5px @interval;
+                    position: relative;
+                    &:hover {
+                        background: #f1f1f1;
+                    }
+                    &:nth-of-type(n+2)::before {
+                        content: '';
+                        display: inline-block;
+                        width: 0;
+                        height: 100%;
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        border-left: 1px solid #ccc;
+                        transform: translateX(-50%);
+                    }
                 }
             }
         }
         .we-selection-main {
             width: 100%;
             font-size: 0;
+            padding: @interval;
             .we-color-group {
                 display: flex;
                 flex-wrap: wrap;
@@ -90,6 +109,11 @@
                         box-shadow: 0 0 0 1px #5fb878;
                     }
                 }
+            }
+            .color-list-null {
+                font-size: 10px;
+                color: #ccc;
+                margin-left: 3px;
             }
         }
     }

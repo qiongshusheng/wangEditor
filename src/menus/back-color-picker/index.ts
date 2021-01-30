@@ -1,20 +1,21 @@
 /**
  * @author 翠林
- * @deprecated 支持调色板的字体颜色菜单
+ * @deprecated 支持调色板的背景色菜单
  */
 
 import Editor from '../../editor'
 import ColorPicker from '../../editor/color-picker'
 import $ from '../../utils/dom-core'
+import { hexToRgb } from '../../utils/util'
 import Menu from '../menu-constructors/Menu'
 
-export default class FontColorPicker extends Menu {
+export default class BackColorPicker extends Menu {
     public picker: ColorPicker
 
     public constructor(editor: Editor) {
         const $elem = $(
             `<div class="w-e-menu" data-title="文字颜色">
-                <i class="w-e-icon-pencil2" ref="icon"></i>
+                <i class="w-e-icon-paint-brush" ref="icon"></i>
             </div>`
         )
         super($elem, editor)
@@ -39,7 +40,6 @@ export default class FontColorPicker extends Menu {
                         cancel: t('取消'),
                         empty: t('无'),
                     },
-                    alpha: false,
                     append: $elem,
                     done: (color: string) => {
                         this.command(color)
@@ -85,18 +85,19 @@ export default class FontColorPicker extends Menu {
      * 执行命令
      * @param value value
      */
-    public command(value: string) {
+    public command(value: string): void {
         const editor = this.editor
         const isEmptySelection = editor.selection.isSelectionEmpty()
         const $selectionElem = editor.selection.getSelectionContainerElem()?.elems[0]
 
         if ($selectionElem == null) return
 
-        const isFont = $selectionElem?.nodeName.toLowerCase() !== 'p'
-        const isSameColor = $selectionElem?.getAttribute('color') === value
+        const isSpan = $selectionElem?.nodeName.toLowerCase() !== 'p'
+        const bgColor = $selectionElem?.style.backgroundColor
+        const isSameColor = hexToRgb(value) === bgColor
 
         if (isEmptySelection) {
-            if (isFont && !isSameColor) {
+            if (isSpan && !isSameColor) {
                 const $elems = editor.selection.getSelectionRangeTopNodes()
                 editor.selection.createRangeByElem($elems[0])
                 editor.selection.moveCursor($elems[0].elems[0])
@@ -105,7 +106,7 @@ export default class FontColorPicker extends Menu {
             editor.selection.createEmptyRange()
         }
 
-        editor.cmd.do('foreColor', value)
+        editor.cmd.do('backColor', value)
 
         if (isEmptySelection) {
             // 需要将选区范围折叠起来

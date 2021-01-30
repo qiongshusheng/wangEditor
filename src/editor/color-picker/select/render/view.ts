@@ -7,13 +7,16 @@ import { ColorData, ColorGroup } from '../../types'
 
 export function colorGroupTPL(colors: ColorGroup) {
     const doms = colors.map(
-        color =>
-            `<i class="we-color" style="background-color: ${color};" data-color="${color}"></i>`
+        color => `<i class="we-color" style="background-color: ${color};" color="${color}"></i>`
     )
     return `<div class="we-color-group">${doms.join('')}</div>`
 }
 
-export default function colorTPL(colors: ColorData, title: string) {
+export function emptyGroupTPL(text: string) {
+    return `<span class="color-list-null">${text}</span>`
+}
+
+export default function colorTPL(colors: ColorData, title: string, empty: string) {
     const doms = []
     if (colors.length) {
         if (Array.isArray(colors[0])) {
@@ -23,6 +26,8 @@ export default function colorTPL(colors: ColorData, title: string) {
         } else {
             doms.push(colorGroupTPL(colors as ColorGroup))
         }
+    } else {
+        doms.push(emptyGroupTPL(empty))
     }
     return `
 <fieldset class="we-selection">

@@ -6,7 +6,7 @@
 import ColorPicker from '..'
 import $, { DomElement } from '../../../utils/dom-core'
 import builtInColor from './render/build-in-color'
-import colorTPL, { colorGroupTPL } from './render/view'
+import colorTPL, { colorGroupTPL, emptyGroupTPL } from './render/view'
 
 export default class Select {
     /**
@@ -18,13 +18,16 @@ export default class Select {
 
     public constructor(picker: ColorPicker) {
         this.picker = picker
+        // 颜色列表的根节点
         this.$el = $(`<div class="we-selections"></div>`)
-        this.$el.on('click', 'i', function (e: MouseEvent) {
-            const color = $(e.target).attr('data-color')
+        // 绑定列表颜色选择
+        this.$el.on('click', 'i[color]', function (e: MouseEvent) {
+            const color = (e.target as Element).getAttribute('color')
             if (color) {
-                picker.config.done(color)
-                picker.record(color)
                 picker.hide()
+                picker.record(color)
+                picker.config.done(color)
+                picker.config.closed(picker)
             }
         })
     }
@@ -34,52 +37,70 @@ export default class Select {
      */
     public render() {
         const doms = []
-        const { builtIn, history, custom } = this.picker.config
-        if (builtIn.show) {
-            doms.push(colorTPL(builtInColor, builtIn.title))
+        const config = this.picker.config
+        // 内置颜色列表
+        if (config.builtIn) {
+            doms.push(colorTPL(builtInColor, config.builtInTitle, config.text.empty))
         }
-        if (custom.color.length) {
-            doms.push(colorTPL(custom.color, custom.title))
+        // 用户自定义颜色列表
+        if (config.custom.length) {
+            doms.push(colorTPL(config.custom, config.customTitle, config.text.empty))
         }
-        if (history.show) {
+        // 最近使用的颜色列表
+        if (config.history) {
             doms.push(
-                colorTPL(this.picker.history, history.title).replace(
+                colorTPL(this.picker.history, config.historyTitle, config.text.empty).replace(
                     'class="we-selection-main"',
                     'class="we-selection-main" ref="history"'
                 )
             )
         }
+        // 切换到调色板按钮
         doms.push(`
             <fieldset class="we-selection we-switchover">
-                <legend class="we-selection-title" ref="switchover"><span>调色板</span><span></span></legend>
+                <legend class="we-selection-title"><div class="btn" ref="cancel">${config.text.cancel}</div><div class="btn" ref="switchover">${config.text.toPalette}</div></legend>
             </fieldset>`)
         this.$el.html(doms.join(''))
         this.picker.$el.append(this.$el)
 
-        // 切换至调色板
-        this.$el.find('[ref="switchover"]').on('click', (e: Event) => {
-            e.stopPropagation()
+        // 事件绑定 - 切换至调色板
+        this.$el.$ref('switchover').on('click', (e: Event) => {
             this.hide()
             this.picker.palette.show()
         })
+
+        // 事件绑定 - 取消
+        this.$el.$ref('cancel').on('click', () => this.picker.hide())
     }
 
     /**
      * 更新历史颜色列表
      */
     public updateHistoryList() {
-        if (this.picker.config.history.show) {
-            this.$el.find('[ref="history"]').html(colorGroupTPL(this.picker.history))
+        if (this.picker.config.history) {
+            const color = this.picker.history
+            const html = color.length
+                ? colorGroupTPL(color)
+                : emptyGroupTPL(this.picker.config.text.empty)
+            this.$el.$ref('history').html(html)
         }
+        return this
     }
 
+    /**
+     * 显示颜色列表
+     */
     public show() {
+        // this.picker.view = 'select'
         this.$el.addClass('show')
+        return this
     }
 
+    /**
+     * 显示调色板
+     */
     public hide() {
         this.$el.removeClass('show')
+        return this
     }
-
-    public destory() {}
 }

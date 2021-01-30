@@ -46,7 +46,9 @@ export default {
         'indent',
         'lineHeight',
         'foreColor',
+        'foreColorPicker',
         'backColor',
+        'backColorPicker',
         'link',
         'list',
         'todo',
@@ -60,7 +62,6 @@ export default {
         'splitLine',
         'undo',
         'redo',
-        'foreColorPicker',
     ],
 
     fontNames: [

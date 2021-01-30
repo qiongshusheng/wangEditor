@@ -96,7 +96,7 @@ export default class Palette {
     }
 
     public render() {
-        this.$el = $(tpl)
+        this.$el = $(tpl(this.picker.config))
         bindEvent(this)
         observe(this)
         this.picker.$el.append(this.$el)
@@ -107,7 +107,6 @@ export default class Palette {
      * 生成颜色最终值
      */
     public createValue() {
-        console.log(this.data)
         const { r, g, b, a, ma } = this.data
         const av = parseFloat((a / ma).toFixed(2))
         switch (this.data.pattern) {
@@ -173,12 +172,11 @@ export default class Palette {
     }
 
     public show() {
+        // this.picker.view = 'palette'
         this.$el.addClass('show')
     }
 
     public hide() {
         this.$el.removeClass('show')
     }
-
-    public destory() {}
 }

@@ -752,6 +752,14 @@ export class DomElement<T extends DomElementSelector = DomElementSelector> {
     }
 
     /**
+     * 查找子元素中指定 ref 值的节点
+     * @param attr 节点属性 ref 的值
+     */
+    $ref(attr: string) {
+        return this.find(`[ref="${attr}"]`)
+    }
+
+    /**
      * 查找子元素中绑定了特定 ref attribute 的节点
      */
     $refs() {

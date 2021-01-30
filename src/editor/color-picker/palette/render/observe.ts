@@ -35,7 +35,6 @@ export default function observe(palette: Palette) {
      * 饱和度
      */
     define(palette.data, 's', function (value: number) {
-        // console.log(`s: ${value}`)
         // 滑块定位
         $refs.sv.css('left', `${value}px`)
         hsvaChange()
@@ -45,7 +44,6 @@ export default function observe(palette: Palette) {
      * 纯度
      */
     define(palette.data, 'v', function (value: number) {
-        // console.log(`v: ${value}`)
         // 滑块定位
         $refs.sv.css('top', `${palette.data.mv - value}px`)
         hsvaChange()

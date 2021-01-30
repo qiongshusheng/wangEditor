@@ -13,6 +13,7 @@ import textConfig from './text'
 import langConfig from './lang'
 import historyConfig from './history'
 import videoConfig, { UploadVideoHooksType } from './video'
+import { UserConfig as PickerConfig } from '../editor/color-picker/types'
 
 // 字典类型
 export type DicType = {
@@ -91,6 +92,7 @@ export type ConfigType = {
     withVideoCredentials: boolean
     customUploadVideo: Function | null
     customInsertVideo: Function | null
+    colorPicker: PickerConfig
 }
 
 export type Resource = {
@@ -125,6 +127,10 @@ const defaultConfig = Object.assign(
         linkCheck: function (text: string, link: string): string | boolean {
             return true
         },
+    },
+    // 颜色选择器配置
+    {
+        colorPicker: {},
     }
 )
 

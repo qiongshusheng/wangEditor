@@ -2,9 +2,18 @@
  * 对象类型数据
  */
 
+import ColorPicker from '.'
 import { DomElementSelector } from '../../utils/dom-core'
 export interface Data {
     [propName: string]: any
+}
+
+export interface Text {
+    toSelect: string
+    toPalette: string
+    done: string
+    cancel: string
+    empty: string
 }
 
 export type ColorGroup = string[]
@@ -12,44 +21,32 @@ export type ColorGroup = string[]
 export type ColorData = ColorGroup | ColorGroup[]
 
 export interface Config {
-    builtIn: {
-        show: boolean
-        title: string
-    }
-    history: {
-        show: boolean
-        title: string
-    }
-    custom: {
-        color: ColorData
-        title: string
-    }
+    alpha: boolean
+    builtIn: boolean
+    builtInTitle: string
+    history: boolean
+    historyTitle: string
+    custom: ColorData
+    customTitle: string
+    text: Text
     append: DomElementSelector
-    closed: (color: string) => void
+    closed: (picker: ColorPicker) => void
     done: (color: string) => void
     cancel: (color: string) => void
     change: (color: string) => void
 }
 
 export interface UserConfig {
-    builtIn?:
-        | Boolean
-        | {
-              show?: boolean
-              title?: string
-          }
-    history?:
-        | Boolean
-        | {
-              show?: boolean
-              title?: string
-          }
-    custom?: {
-        color: ColorData
-        title: string
-    }
+    alpha?: boolean
+    builtIn?: boolean
+    builtInTitle?: string
+    history?: boolean
+    historyTitle?: string
+    custom?: ColorData
+    customTitle?: string
+    text?: Text
     append?: DomElementSelector
-    closed?: (color: string) => void
+    closed?: (picker: ColorPicker) => void
     done: (color: string) => void
     cancel?: (color: string) => void
     change?: (color: string) => void

@@ -42,6 +42,9 @@ export default function bindEvent(palette: Palette) {
         palette.analyseValue(value)
     })
 
+    /**
+     * enter
+     */
     $refs.input.on('keydown', function (e: KeyboardEvent) {
         if (e.keyCode === 13) {
             let value = (e.target as HTMLInputElement).value.trim()
@@ -76,7 +79,6 @@ export default function bindEvent(palette: Palette) {
     $refs.done.on('click', function () {
         picker.record(palette.data.value)
         picker.hide()
-        console.log(palette.data)
         picker.config.done(palette.data.value)
         picker.config.closed(picker)
     })

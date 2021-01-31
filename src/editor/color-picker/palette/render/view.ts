@@ -8,7 +8,9 @@ import { Config } from '../../types'
 export default function tpl(config: Config) {
     const alpha = `
 <div class="we-color_alpha" ref="a">
-    <div class="we-slider vertical" ref="alpha"></div>
+    <div class="we-alpha-bg">
+        <div class="we-slider vertical" ref="alpha"></div>
+    </div>
 </div>`
 
     return `
@@ -33,10 +35,10 @@ export default function tpl(config: Config) {
             <label class="pattern" ref="pattern">RGB</label>
         </div>
     </div>
-    <div class="we-color-btns">
-        <button type="button" class="btn primary" ref="switchover">${config.text.toSelect}</button>
-        <button type="button" class="btn primary" ref="cancel">${config.text.cancel}</button>
-        <button type="button" class="btn" ref="done">${config.text.done}</button>
+    <div class="we-footer-btns">
+        <div class="btn" ref="switchover">${config.text.toSelect}</div>
+        <div class="btn" ref="cancel">${config.text.cancel}</div>
+        <div class="btn" ref="done">${config.text.done}</div>
     </div>
 </div>`
 }

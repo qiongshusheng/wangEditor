@@ -30,6 +30,8 @@ export default class BackColorPicker extends Menu {
             Object.assign(
                 { ...this.editor.config.colorPicker },
                 {
+                    space: 'back',
+                    append: $elem,
                     builtInTitle: t('内置颜色列表'),
                     historyTitle: t('最近使用的颜色'),
                     customTitle: t('自定义颜色列表'),
@@ -40,7 +42,6 @@ export default class BackColorPicker extends Menu {
                         cancel: t('取消'),
                         empty: t('无'),
                     },
-                    append: $elem,
                     done: (color: string) => {
                         this.command(color)
                     },
@@ -49,11 +50,11 @@ export default class BackColorPicker extends Menu {
         )
 
         // 配置颜色选择器的 z-index
-        this.picker.css('z-index', this.editor.zIndex.get('panel'))
+        this.picker.css('z-index', editor.zIndex.get('panel'))
 
         // 显示颜色选择器的回调函数
         let show = () => {
-            const height = this.$elem.getBoundingClientRect().height
+            const height = $elem.getBoundingClientRect().height
             this.picker.css('margin-top', `${height}px`)
             this.picker.show()
             // 重写 show 函数
@@ -61,16 +62,17 @@ export default class BackColorPicker extends Menu {
         }
 
         // 绑定菜单的鼠标悬浮事件
-        this.$elem.$ref('icon').on('mouseenter', () => {
-            if (this.editor.selection.getRange() !== null) {
-                this.$elem.css('z-index', this.editor.zIndex.get('menu'))
+        $elem.$ref('icon').on('mouseenter', () => {
+            if (editor.selection.getRange() !== null) {
+                editor.txt.eventHooks.dropListMenuHoverEvents.forEach(fn => fn())
+                $elem.css('z-index', editor.zIndex.get('menu'))
                 show()
             }
         })
 
         // 隐藏颜色选择器的回调函数
         const hide = () => {
-            this.$elem.css('z-index', 'auto')
+            $elem.css('z-index', 'auto')
             this.picker.hide()
         }
 

@@ -12,6 +12,9 @@ import observe from './render/observe'
 import bindEvent from './render/event'
 import tpl from './render/view'
 
+/**
+ * 调色板
+ */
 export default class Palette {
     /**
      * 调色板的根节点
@@ -95,11 +98,13 @@ export default class Palette {
         this.$el = $('<div></div>')
     }
 
+    /**
+     * 渲染
+     */
     public render() {
         this.$el = $(tpl(this.picker.config))
         bindEvent(this)
         observe(this)
-        this.picker.$el.append(this.$el)
         this.data.value = 'rgb(255, 0, 0)'
     }
 
@@ -126,7 +131,7 @@ export default class Palette {
      */
     public analyseValue(value: string) {
         this.forward = false
-        // // 分析用户的输入
+        // 分析用户的输入
         if (hexRegex.test(value)) {
             this.data.value = value
             this.data.pattern = 'hex'
@@ -171,12 +176,17 @@ export default class Palette {
         this.data.v = (v / 100) * this.data.mv
     }
 
+    /**
+     * 显示调色板
+     */
     public show() {
-        // this.picker.view = 'palette'
-        this.$el.addClass('show')
+        this.picker.$el.append(this.$el)
     }
 
+    /**
+     * 隐藏调色板
+     */
     public hide() {
-        this.$el.removeClass('show')
+        this.$el.remove()
     }
 }

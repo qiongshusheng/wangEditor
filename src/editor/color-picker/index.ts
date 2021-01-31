@@ -1,6 +1,6 @@
 /**
  * @author 翠林
- * @deprecated 颜色选择器
+ * @deprecated 颜色选择器。分为【颜色列表】和【调色板】两部分。
  */
 
 import '../../assets/style/color-picker.less'
@@ -22,31 +22,39 @@ export default class ColorPicker {
      */
     public palette: Palette
 
-    /**
-     * 当前显示的视图。颜色列表和调色板二选一
-     */
-    // public view: 'select' | 'palette' = 'select'
-
     constructor() {
         this.$el = $(`<div class="we-color-picker"></div>`)
         this.select = new Select(this)
         this.palette = new Palette(this)
     }
 
+    /**
+     * 二次封装 space
+     */
+    public get space() {
+        return `wecph-${this.config.space}`
+    }
+
+    /**
+     * 获取【最近使用的颜色】
+     */
     public get history(): string[] {
-        const history = localStorage.getItem('wech')
+        const history = localStorage.getItem(this.space)
         if (history && /^\[.*\]$/.test(history)) {
             return JSON.parse(history)
         }
         return []
     }
 
+    /**
+     * 保存【最近使用的颜色】
+     */
     public set history(value: string[]) {
-        localStorage.setItem('wech', JSON.stringify(value.slice(0, 20)))
+        localStorage.setItem(this.space, JSON.stringify(value.slice(0, 20)))
     }
 
     /**
-     * 保存颜色值
+     * 将某一个颜色值保存到【最近使用的颜色】
      * @param value color 值
      */
     public record(value: string) {
@@ -68,71 +76,32 @@ export default class ColorPicker {
      * 配置
      */
     public config: Config = {
-        /**
-         * 调色板是否支持透明度选择
-         */
+        space: 'wecph',
         alpha: true,
-        /**
-         * 内置颜色列表
-         */
         builtIn: true,
-        /**
-         * 内置颜色列表 Title
-         */
         builtInTitle: '内置颜色列表',
-        /**
-         * 最近使用的颜色
-         */
         history: true,
-        /**
-         * 最近使用的颜色 Title
-         */
         historyTitle: '最近使用的颜色',
-        /**
-         * 用户自定义颜色列表
-         */
         custom: [],
-        /**
-         * 自定义颜色列表 Title
-         */
         customTitle: '自定义颜色列表',
-        /**
-         * 关键节点的文本
-         */
         text: {
-            /** 切换至【颜色列表】按钮 */
             toSelect: '颜色列表',
-            /** 切换至【调色板】按钮 */
             toPalette: '调色板',
-            /** 调色板的【确定】按钮 */
             done: '确定',
-            /** 调色板的【取消】按钮 */
             cancel: '取消',
-            /** 【最近使用的颜色】没有内容时的提示语 */
             empty: '无',
         },
-        /**
-         * 颜色选择器的父容器
-         */
         append: document.body,
-        /**
-         * 颜色选择器关闭的回调
-         */
         closed: EMPTY_FN,
-        /**
-         * 确认选择某一颜色的回调
-         */
         done: EMPTY_FN,
-        /**
-         * 未选色而关闭选择器的回调
-         */
         cancel: EMPTY_FN,
-        /**
-         * 调色板颜色变化的回调
-         */
         change: EMPTY_FN,
     }
 
+    /**
+     * 快捷创建颜色选择器
+     * @param config 配置项
+     */
     public static create(config: UserConfig) {
         const instance = new ColorPicker()
 
@@ -143,6 +112,9 @@ export default class ColorPicker {
         return instance
     }
 
+    /**
+     * 渲染
+     */
     public render() {
         this.$el.on('click', function (e: Event) {
             e.stopPropagation()
@@ -157,18 +129,20 @@ export default class ColorPicker {
         return this
     }
 
+    /**
+     * 打开颜色选择器
+     */
     public show() {
-        this.$el.addClass('show')
         this.select.updateHistoryList().show()
         this.palette.hide()
     }
 
+    /**
+     * 关闭颜色选择器
+     */
     public hide() {
-        this.$el.removeClass('show')
         this.select.hide()
         this.palette.hide()
         this.config.closed(this)
     }
-
-    public destory() {}
 }

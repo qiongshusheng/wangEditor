@@ -57,11 +57,12 @@ export default class Select {
         }
         // 切换到调色板按钮
         doms.push(`
-            <fieldset class="we-selection we-switchover">
-                <legend class="we-selection-title"><div class="btn" ref="cancel">${config.text.cancel}</div><div class="btn" ref="switchover">${config.text.toPalette}</div></legend>
-            </fieldset>`)
+        <div class="we-footer-btns">
+            <div class="btn" ref="cancel">${config.text.cancel}</div>
+            <div class="btn" ref="switchover">${config.text.toPalette}</div>
+        </div>`)
+
         this.$el.html(doms.join(''))
-        this.picker.$el.append(this.$el)
 
         // 事件绑定 - 切换至调色板
         this.$el.$ref('switchover').on('click', (e: Event) => {
@@ -70,7 +71,10 @@ export default class Select {
         })
 
         // 事件绑定 - 取消
-        this.$el.$ref('cancel').on('click', () => this.picker.hide())
+        this.$el.$ref('cancel').on('click', () => {
+            this.picker.hide()
+            this.picker.config.closed(this.picker)
+        })
     }
 
     /**
@@ -91,16 +95,15 @@ export default class Select {
      * 显示颜色列表
      */
     public show() {
-        // this.picker.view = 'select'
-        this.$el.addClass('show')
+        this.picker.$el.append(this.$el)
         return this
     }
 
     /**
-     * 显示调色板
+     * 隐藏颜色列表
      */
     public hide() {
-        this.$el.removeClass('show')
+        this.$el.remove()
         return this
     }
 }

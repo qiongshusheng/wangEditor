@@ -20,7 +20,7 @@ export default function observe(palette: Palette) {
     }
 
     /**
-     * 色度
+     * 色度 - 定位
      */
     define(palette.data, 'h', function (value: number) {
         // 滑块定位
@@ -32,7 +32,7 @@ export default function observe(palette: Palette) {
     })
 
     /**
-     * 饱和度
+     * 饱和度 - 定位
      */
     define(palette.data, 's', function (value: number) {
         // 滑块定位
@@ -41,7 +41,7 @@ export default function observe(palette: Palette) {
     })
 
     /**
-     * 纯度
+     * 纯度 - 定位
      */
     define(palette.data, 'v', function (value: number) {
         // 滑块定位

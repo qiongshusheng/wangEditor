@@ -290,7 +290,7 @@ export default {
                     内置颜色列表: 'built-in color list',
                     最近使用的颜色: 'recently used color',
                     自定义颜色列表: 'custom color list',
-                    颜色列表: 'to built-in',
+                    颜色列表: 'to list',
                     调色板: 'to palette',
                     确定: 'confirm',
                     取消: 'cancel',

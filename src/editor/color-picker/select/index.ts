@@ -73,6 +73,7 @@ export default class Select {
         // 事件绑定 - 取消
         this.$el.$ref('cancel').on('click', () => {
             this.picker.hide()
+            this.picker.config.cancel(this.picker)
             this.picker.config.closed(this.picker)
         })
     }

@@ -71,7 +71,7 @@ export default function bindEvent(palette: Palette) {
     // 取消
     $refs.cancel.on('click', function () {
         picker.hide()
-        picker.config.cancel(palette.data.value)
+        picker.config.cancel(picker)
         picker.config.closed(picker)
     })
 

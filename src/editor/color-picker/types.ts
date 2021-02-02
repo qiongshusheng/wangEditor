@@ -87,7 +87,7 @@ export interface Config {
     /**
      * 未选色而关闭选择器的回调
      */
-    cancel: (color: string) => void
+    cancel: (picker: ColorPicker) => void
     /**
      * 调色板颜色变化的回调
      */
@@ -149,7 +149,7 @@ export interface UserConfig {
     /**
      * 未选色而关闭选择器的回调
      */
-    cancel?: (color: string) => void
+    cancel?: (picker: ColorPicker) => void
     /**
      * 调色板颜色变化的回调
      */

@@ -38,6 +38,7 @@ describe('颜色选择器：color picker', () => {
     test('显示颜色列表', () => {
         picker.show()
         expect(picker.$el.find('[class="we-selections"]').elems.length).toBe(1)
+        expect(picker.$el.find('[class="we-palette"]').elems.length).toBe(0)
     })
 
     test('列表页自定义标题配置', () => {
@@ -51,6 +52,7 @@ describe('颜色选择器：color picker', () => {
 
     test('显示调色板', () => {
         picker.$el.$ref('switchover').elems[0].click()
+        expect(picker.$el.find('[class="we-selections"]').elems.length).toBe(0)
         expect(picker.$el.find('[class="we-palette"]').elems.length).toBe(1)
     })
 

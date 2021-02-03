@@ -11,7 +11,7 @@ import ColorPickerMenu from '../menu-constructors/ColorPickerMenu'
 export default class BackColorPicker extends ColorPickerMenu {
     public constructor(editor: Editor) {
         const $elem = $(
-            `<div class="w-e-menu" data-title="文字颜色">
+            `<div class="w-e-menu" data-title="背景颜色">
                 <i class="w-e-icon-paint-brush"></i>
             </div>`
         )

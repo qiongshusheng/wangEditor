@@ -106,6 +106,11 @@ export default class Palette {
         bindEvent(this)
         observe(this)
         this.data.value = 'rgb(255, 0, 0)'
+        // RGB 在 font 标签上的支持很差，我们这里禁用 RGB 颜色的设置
+        if (!this.picker.config.rgb) {
+            this.pattern = ['hex']
+            this.data.pattern = 'hex'
+        }
     }
 
     /**

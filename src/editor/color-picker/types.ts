@@ -37,6 +37,10 @@ export type ColorData = ColorGroup | ColorGroup[]
  */
 export interface Config {
     /**
+     * 调色板允许使用 RGB 颜色
+     */
+    rgb: boolean
+    /**
      * 本次实例的命名空间
      */
     space: string
@@ -98,6 +102,10 @@ export interface Config {
  * 供用户配置的配置项
  */
 export interface UserConfig {
+    /**
+     * 调色板允许使用 RGB 颜色
+     */
+    rgb?: boolean
     /**
      * 本次实例的命名空间
      */

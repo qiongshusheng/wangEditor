@@ -3,6 +3,7 @@
  * @deprecated 支持调色板的字体颜色菜单
  */
 
+import { UA } from '../../utils/util'
 import Editor from '../../editor'
 import $ from '../../utils/dom-core'
 import ColorPickerMenu from '../menu-constructors/ColorPickerMenu'
@@ -15,6 +16,7 @@ export default class FontColorPicker extends ColorPickerMenu {
             </div>`
         )
         const config = {
+            rgb: !UA.isFirefox,
             space: 'font',
             alpha: false,
             done: (color: string) => {

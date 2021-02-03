@@ -76,6 +76,7 @@ export default class ColorPicker {
      * 配置
      */
     public config: Config = {
+        rgb: true,
         space: 'wecph',
         alpha: true,
         builtIn: true,
